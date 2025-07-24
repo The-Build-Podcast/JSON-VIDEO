@@ -213,6 +213,67 @@ export default function AIVideoPromptEnhancer() {
     setCurrentStep(3)
   }
 
+  const getComponentDescription = (key: string): string => {
+    const descriptions: Record<string, string> = {
+      subject: "The main character, object, or focus of your video",
+      activity: "Specific actions, movements, or behaviors being performed",
+      environment: "Setting, location, and background elements of the scene",
+      camera_style: "Camera movements, angles, and shot compositions",
+      lighting: "Lighting conditions and mood that enhance the scene",
+      mood: "Overall emotional tone and atmosphere of the video",
+      visual_style: "Artistic style, quality level, and visual treatment",
+      duration: "Suggested video length in seconds (typically 5-10 seconds)",
+      audio_description: "Sound effects, music, or audio elements",
+      technical_specs: "Resolution, frame rate, and technical requirements",
+    }
+    return descriptions[key] || "Component description"
+  }
+
+  const getPresetButtons = (key: string) => {
+    const presets: Record<string, Array<{ label: string; value: string }>> = {
+      camera_style: [
+        { label: "Close-up", value: "close-up shot" },
+        { label: "Wide", value: "wide establishing shot" },
+        { label: "Tracking", value: "smooth tracking movement" },
+        { label: "Static", value: "static camera position" },
+      ],
+      lighting: [
+        { label: "Golden Hour", value: "warm golden hour lighting" },
+        { label: "Dramatic", value: "dramatic high contrast lighting" },
+        { label: "Soft", value: "soft diffused lighting" },
+        { label: "Neon", value: "vibrant neon lighting" },
+      ],
+      mood: [
+        { label: "Energetic", value: "high-energy and dynamic" },
+        { label: "Calm", value: "peaceful and serene" },
+        { label: "Mysterious", value: "mysterious and intriguing" },
+        { label: "Playful", value: "fun and playful" },
+      ],
+      visual_style: [
+        { label: "Cinematic", value: "cinematic film quality" },
+        { label: "Vintage", value: "vintage retro aesthetic" },
+        { label: "Modern", value: "sleek modern style" },
+        { label: "Artistic", value: "artistic and creative" },
+      ],
+    }
+    return presets[key] || []
+  }
+
+  const enhanceComponentWithAI = async (componentKey: string) => {
+    // TODO: Implement AI enhancement for specific component
+    console.log(`Enhancing ${componentKey} with AI`)
+  }
+
+  const openPromptDialog = (componentKey: string) => {
+    // TODO: Implement custom prompt dialog
+    console.log(`Opening prompt dialog for ${componentKey}`)
+  }
+
+  const applyPreset = async (componentKey: string, presetValue: string) => {
+    // TODO: Implement preset application with AI
+    console.log(`Applying preset "${presetValue}" to ${componentKey}`)
+  }
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 p-4">
       <div className="max-w-6xl mx-auto">
@@ -298,23 +359,68 @@ export default function AIVideoPromptEnhancer() {
               <p className="text-slate-600">Edit each component to perfect your video prompt</p>
             </div>
 
-            <div className="grid md:grid-cols-2 gap-4">
+            <div className="grid md:grid-cols-2 gap-6">
               {Object.entries(promptComponents ?? DEFAULT_COMPONENTS).map(([key, value]) => (
-                <Card key={key}>
-                  <CardHeader className="pb-3">
-                    <CardTitle className="text-sm font-medium capitalize flex items-center gap-2">
-                      <Badge variant="outline" className="text-xs">
+                <Card key={key} className="relative overflow-hidden border-2 hover:border-blue-200 transition-colors">
+                  <CardHeader className="pb-4 bg-gradient-to-r from-slate-50 to-slate-100">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <CardTitle className="text-lg font-semibold capitalize text-slate-800">
+                          {key.replace("_", " ")}
+                        </CardTitle>
+                        <p className="text-sm text-slate-600 mt-1">{getComponentDescription(key)}</p>
+                      </div>
+                      <Badge variant="outline" className="text-xs bg-white">
                         {key.replace("_", " ")}
                       </Badge>
-                    </CardTitle>
+                    </div>
                   </CardHeader>
-                  <CardContent>
-                    <Textarea
-                      value={value}
-                      onChange={(e) => updateComponent(key as keyof PromptComponents, e.target.value)}
-                      className="min-h-[80px] resize-none"
-                      placeholder={`Describe the ${key.replace("_", " ")}...`}
-                    />
+                  <CardContent className="space-y-4">
+                    <div className="space-y-2">
+                      <Label className="text-sm font-medium text-slate-700">Content</Label>
+                      <Textarea
+                        value={value}
+                        onChange={(e) => updateComponent(key as keyof PromptComponents, e.target.value)}
+                        className="min-h-[100px] resize-none border-slate-200 focus:border-blue-400"
+                        placeholder={`Describe the ${key.replace("_", " ")}...`}
+                      />
+                    </div>
+
+                    <div className="flex flex-wrap gap-2 pt-2 border-t border-slate-100">
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        onClick={() => enhanceComponentWithAI(key)}
+                        className="flex-1 min-w-[120px] bg-blue-50 hover:bg-blue-100 border-blue-200"
+                      >
+                        <Sparkles className="w-3 h-3 mr-1" />
+                        Enhance with AI
+                      </Button>
+
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        onClick={() => openPromptDialog(key)}
+                        className="flex-1 min-w-[100px] bg-purple-50 hover:bg-purple-100 border-purple-200"
+                      >
+                        <Edit3 className="w-3 h-3 mr-1" />
+                        Custom Prompt
+                      </Button>
+                    </div>
+
+                    <div className="flex flex-wrap gap-1">
+                      {getPresetButtons(key).map((preset, index) => (
+                        <Button
+                          key={index}
+                          size="sm"
+                          variant="ghost"
+                          onClick={() => applyPreset(key, preset.value)}
+                          className="text-xs px-2 py-1 h-7 bg-slate-100 hover:bg-slate-200 text-slate-700"
+                        >
+                          {preset.label}
+                        </Button>
+                      ))}
+                    </div>
                   </CardContent>
                 </Card>
               ))}
